@@ -7,7 +7,7 @@
 
 ::include{file=docs/main.md}
 ::include{file=docs/gitlab/main.md}
-::include{file=docs/terraform/main.md}
+::include{file=docs/terraform/gitlab/main.md}
 ::include{file=.gitlab/contributions.md}
 ::include{file=.gitlab/license.md}
 ::include{file=.gitlab/authors.md}
