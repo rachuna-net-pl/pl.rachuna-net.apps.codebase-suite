@@ -1,0 +1,72 @@
+{
+  "module": {
+    "{{ module_name }}": {
+      "source": "{{ source }}",
+      "name": "{{ project['name'] }}",
+      "archived": {{ project['archived'] | lower }},
+      "description": {% if project['description'] != None %}"{{ project['description'] }}"{% else %}null{% endif %},
+      "visibility": "{{ project['visibility'] }}",
+      "tags": {{ project['topics'] | replace("'", '"') }},
+      "avatar": "{{ project['avatar'] }}",
+      "parent_group": "local.parent_name",
+      {% set project_type_var = project['ciVariables'] | selectattr('key', 'equalto', 'PROJECT_TYPE') | first %}
+      {% if project_type_var %}
+      "project_type": "{{ project_type_var.value }}",
+      {% endif %}
+      {% for rule in project['branchRules'] %}
+      {% if rule['isDefault'] %}
+      "default_branch": "{{ rule['name'] }}",
+      {% endif %}
+      {% endfor %}
+      "build_git_strategy": "clone",
+      "gitlab_ci_path": "{{ project['ciConfigPathOrDefault'] }}",
+      
+      {% set sonar_var = project['ciVariables'] | selectattr('key', 'equalto', 'IS_ENABLED_SONARQUBE') | first %}
+      "is_enabled_sonarqube": {% if sonar_var %}{{ sonar_var.value }}{% else %}false{% endif %},
+      {% set sonar_id_var = project['ciVariables'] | selectattr('key', 'equalto', 'SONARQUBE_CLOUD_PROJECT_ID') | first %}
+      {% if sonar_id_var %}
+      "sonarqube_cloud_project_id": "{{ sonar_id_var.value }}",
+      {% endif %}
+
+      "mirror_url": "${format(\"https://%s:%s@github.com/%s/%s.git\", data.vault_kv_secret_v2.github.data[\"owner\"], data.vault_kv_secret_v2.github.data[\"token\"], data.vault_kv_secret_v2.github.data[\"owner\"], \"{{ project['fullPath'].replace('/', '.') }}\")}",
+
+      {% if project['ciVariables'] | length > 0 %}
+      {% set set_variables = project['ciVariables'] | selectattr('key', 'equalto', 'PROJECT_TYPE') | first %}
+      "variables": {
+        {% for v in project['ciVariables'] %}
+        {% if not v['key'] in ['PROJECT_TYPE','IS_ENABLED_SONARQUBE','SONARQUBE_CLOUD_PROJECT_ID'] %}
+        "{{ v['key'] }}": {
+          "description": {% if v['description'] != None %}"{{ v['description'] }}"{% else %}null{% endif %},
+          "value": "{{ v['value'] }}",
+          "protected": {{ v['protected'] | lower }},
+          "masked": {{ v['masked'] | lower }},
+          "environmentScope": "{{ v['environmentScope'] }}"
+        }{% if not loop.last %},{% endif %}
+        {% endif %}
+        {% endfor %}
+      },
+      {% endif %}
+
+      {% if project['branchRules'] | length > 0 %}
+      "protected_branches": {
+        {% for pb in project['branchRules'] %}
+        {% if pb['name'] != "All branches" %}
+        "{{ pb['name'] }}": {
+          "push_access_level": "{% if pb['branchProtection']['pushAccessLevels'][0]['access_level_description'] == 'Maintainers' %}maintainer{% elif pb['branchProtection']['pushAccessLevels'][0]['access_level_description'] == 'Developers + Maintainers' %}developer{% else %}no one{% endif %}",
+          "merge_access_level": "{% if pb['branchProtection']['mergeAccessLevels'][0]['access_level_description'] == 'Maintainers' %}maintainer{% elif pb['branchProtection']['mergeAccessLevels'][0]['access_level_description'] == 'Developers + Maintainers' %}developer{% else %}no one{% endif %}"
+        }{% if not loop.last %},{% endif %}
+        {% endif %}
+        {% endfor %}
+      },
+      {% endif %}
+
+      "protected_tags": {
+        {% for pt in project['protected_tags'] %}
+        "{{ pt['name'] }}": {
+          "create_access_level": "{% if pt['create_access_levels'][0]['access_level_description'] == 'Maintainers' %}maintainer{% elif pt['create_access_levels'][0]['access_level_description'] == 'Developers + Maintainers' %}developer{% else %}no one{% endif %}"
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+      }
+    }
+  }
+}

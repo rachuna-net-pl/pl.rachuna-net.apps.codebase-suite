@@ -1,0 +1,42 @@
+[project]
+name = "codebase-suite"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Maciej Rachuna",email = "rachuna.maciej@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "click (>=8.2.1,<9.0.0)",
+    "singleton-decorator (>=1.0.0,<2.0.0)",
+    "pydantic (>=2.11.7,<3.0.0)",
+    "python-gitlab[graphql] (>=6.1.0,<7.0.0)",
+    "pydantic-settings (>=2.10.1,<3.0.0)",
+    "pandas (>=2.3.0,<3.0.0)",
+    "rich (>=14.0.0,<15.0.0)",
+    "pyyaml (>=6.0.2,<7.0.0)",
+    "python-hcl2 (>=7.2.1,<8.0.0)",
+    "jinja2 (>=3.1.6,<4.0.0)",
+    "loguru (>=0.7.3,<0.8.0)",
+    "path (>=17.1.0,<18.0.0)",
+    "pathlib (>=1.0.1,<2.0.0)"
+]
+
+[tool.poetry]
+packages = [{include = "codebase_suite", from = "."}]
+
+[tool.poetry.dependencies]
+python = ">=3.12,<4.0"
+
+[tool.poetry.scripts]
+codebase-suite = "codebase_suite:commands"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.1"
+pytest-cov = "^6.2.1"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+

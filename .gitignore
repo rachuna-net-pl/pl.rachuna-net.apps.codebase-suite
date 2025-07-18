@@ -1,0 +1,4 @@
+**/__pycache__/**
+.pytest*
+cov.xml
+.coverage
