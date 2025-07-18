@@ -1,0 +1,51 @@
+module "_{{ module_name }}" {
+    source = "{{ source }}"
+    
+    name           = "{{ group['name'] }}"
+    description    = "{% if group['description'] != None %}{{ group['description'] }}{% endif %}"
+    parent_group   = local.parent_name
+    visibility     = "{{ group['visibility'] }}"
+    default_branch = "main"
+    avatar         = "{{ group['avatar'] }}"
+    
+    {% if group['labels'] | length > 0 %}
+    labels = {
+    {% for l in group['labels'] %}
+      "{{ l['title'] }}" = {
+          description = "{% if l['description'] != None %}{{ l['description'] }}{% endif %}",
+          color       = "{{ l['color'] }}"
+      }
+    {% endfor %}
+    }
+    {% endif %}
+
+    {% if group['badges'] | length > 0 %}
+    badges = {
+    {% for b in group['badges'] %}
+      {{ b['name'] }} = {
+          link_url  = "{{ b['link_url'] }}",
+          image_url = "{{ b['image_url'] }}"
+      }
+    {% endfor %}
+    }
+    {% endif %}
+
+    {% if group['variables'] | length > 0 %}
+    variables = {
+    {% for v in group['variables'] %}
+      {{ v['key'] }} = {
+          description      = "{% if v['description'] != None %}{{ v['description'] }}{% endif %}",
+          value            = "{{ v['value'] }}",
+          protected        = {{ v['protected'] | lower }},
+          masked           = {{ v['masked'] | lower }},
+          environmentScope = "{{ v['environmentScope'] }}"
+      }
+    {% endfor %}
+    }
+    {% endif %}
+
+}
+
+module "{{ group['name'].replace(".", "_") }}" {
+  source = "./{{ group['name'] }}/"
+}
