@@ -21,6 +21,9 @@ codebase-suite
         └── gitlab       # Importowanie resources do terraform state dla iac-gitlab
 ```
 
+[codebase-suite → gitlab](/docs/gitlab/main.md)
+[codebase-suite → terraform → gitlab](/docs/terraform/gitlab/main.md)
+
 ### Architektura aplikacji
 
 Aplikacja wykorzystuje modularne podejście z następującą strukturą:
@@ -73,7 +76,7 @@ Aplikacja może być skonfigurowana przez:
 - Parametry wiersza poleceń
 - Zmienne środowiskowe
   
-.envrc
+**.envrc**
 ```
 ## Gitlab
 export GITLAB_FQDN="https://gitlab.com/"
