@@ -61,6 +61,7 @@ flowchart LR
 
 
 **Import grup**
+
 ```mermaid
 ---
 config:
@@ -78,6 +79,7 @@ xychart-beta
 
 
 **Import projektów**
+
 ```mermaid
 ---
 config:
@@ -94,6 +96,7 @@ xychart-beta
 ```
 
 **Import ustawień grup i repozytoriów**
+
 ```mermaid
 ---
 config:
